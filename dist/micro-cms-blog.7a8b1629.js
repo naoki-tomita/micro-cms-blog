@@ -1056,7 +1056,7 @@ try {
   const Header = () => {
     return /*#__PURE__*/_react.default.createElement("header", {
       style: {
-        background: `url(${_logo.default})`,
+        background: `url(${_logo.default}) center no-repeat`,
         display: "block",
         height: 220,
         ...{
@@ -1095,35 +1095,51 @@ try {
 
     const [entry, setEntry] = (0, _react.useState)(null);
     (0, _react.useEffect)(() => {
-      fetchCms(`/entries/${id}`).then(it => it.json()).then(it => setEntry(it));
+      fetchCms(`/entries/${id}`).then(it => it.json()).then(it => setEntry(it.let(it => ({ ...it,
+        publishedAt: new Date(it.publishedAt)
+      }))));
     }, [id]);
     return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(Header, {
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 31,
+        lineNumber: 35,
         columnNumber: 5
       }
     }), /*#__PURE__*/_react.default.createElement("main", {
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 32,
+        lineNumber: 36,
         columnNumber: 5
       }
-    }, /*#__PURE__*/_react.default.createElement("div", {
+    }, /*#__PURE__*/_react.default.createElement("section", {
+      __self: void 0,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 37,
+        columnNumber: 7
+      }
+    }, /*#__PURE__*/_react.default.createElement("h1", {
+      __self: void 0,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 38,
+        columnNumber: 9
+      }
+    }, entry?.title ?? "loading...")), /*#__PURE__*/_react.default.createElement("div", {
       ref: ref => entry && ref && (ref.innerHTML = entry.body.replace(/<img(.+?)>/g, "<figure><img $1></figure>")),
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 33,
+        lineNumber: 42,
         columnNumber: 7
       }
     }, "loading")), /*#__PURE__*/_react.default.createElement("footer", {
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 35,
+        lineNumber: 44,
         columnNumber: 5
       }
     }, "@kojiro.ueda"));
@@ -1138,46 +1154,78 @@ try {
 
     const [entries, setEntries] = (0, _react.useState)([]);
     (0, _react.useEffect)(() => {
-      fetchCms("/entries").then(it => it.json()).then(it => setEntries(it.contents));
+      fetchCms("/entries").then(it => it.json()).then(({
+        contents
+      }) => setEntries(contents.map(it => ({ ...it,
+        publishedAt: new Date(it.publishedAt)
+      }))));
     }, []);
     return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(Header, {
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 53,
+        lineNumber: 59,
         columnNumber: 5
       }
     }), /*#__PURE__*/_react.default.createElement("main", {
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 54,
+        lineNumber: 60,
         columnNumber: 5
       }
-    }, /*#__PURE__*/_react.default.createElement("ul", {
+    }, /*#__PURE__*/_react.default.createElement("section", {
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 55,
+        lineNumber: 61,
         columnNumber: 7
       }
-    }, entries.map(it => /*#__PURE__*/_react.default.createElement("li", {
+    }, entries.map(it => /*#__PURE__*/_react.default.createElement("aside", {
       key: it.id,
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 56,
-        columnNumber: 28
+        lineNumber: 63,
+        columnNumber: 11
+      }
+    }, /*#__PURE__*/_react.default.createElement("h3", {
+      __self: void 0,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 64,
+        columnNumber: 13
       }
     }, /*#__PURE__*/_react.default.createElement(Link, {
       href: `/entries/${it.id}`,
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 56,
-        columnNumber: 44
+        lineNumber: 65,
+        columnNumber: 15
       }
-    }, it.title))))));
+    }, it.title)), /*#__PURE__*/_react.default.createElement("p", {
+      __self: void 0,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 67,
+        columnNumber: 13
+      }
+    }, /*#__PURE__*/_react.default.createElement("small", {
+      __self: void 0,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 67,
+        columnNumber: 16
+      }
+    }, it.publishedAt.toDateString())))))), /*#__PURE__*/_react.default.createElement("footer", {
+      __self: void 0,
+      __source: {
+        fileName: _jsxFileName,
+        lineNumber: 71,
+        columnNumber: 5
+      }
+    }, "@kojiro.ueda"));
   };
 
   _s2(Entries, "si2ZVsazrWomTuBdDT2zYRo3CE0=");
@@ -1200,7 +1248,7 @@ try {
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 76,
+        lineNumber: 89,
         columnNumber: 5
       }
     }));
@@ -1256,7 +1304,7 @@ try {
       __self: void 0,
       __source: {
         fileName: _jsxFileName,
-        lineNumber: 123,
+        lineNumber: 136,
         columnNumber: 5
       }
     }, children);
@@ -1291,7 +1339,7 @@ try {
           __self: this,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 145,
+            lineNumber: 158,
             columnNumber: 9
           }
         }), routes.find(it => matchPath(path, it.path))?.let(({
@@ -1301,7 +1349,7 @@ try {
           __self: this,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 146,
+            lineNumber: 159,
             columnNumber: 93
           }
         }))) ?? "not found");
@@ -1315,7 +1363,7 @@ try {
     __self: void 0,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 153,
+      lineNumber: 166,
       columnNumber: 8
     }
   }), document.getElementById("app"));

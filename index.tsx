@@ -9,27 +9,36 @@ function fetchCms(path: string) {
 
 const Header: FC = () => {
   return (
-    <header style={{ background: `url(${logo})`, display: "block", height: 220, ...{"&:hover": { filter: "none" }} }}>
+    <header style={{ background: `url(${logo}) center no-repeat`, display: "block", height: 220, ...{"&:hover": { filter: "none" }} }}>
       <Link href="/entries" style={{ height: "100%", width: "100%" }} ></Link>
     </header>
   );
 }
 
+interface Entry {
+  id: string;
+  title: string;
+  body: string;
+  publishedAt: Date;
+}
+
+
 const Entry: FC<{ id: string }> = ({ id }) => {
-  const [entry, setEntry] = useState<{
-    id: string;
-    title: string;
-    body: string;
-  } | null>(null);
+  const [entry, setEntry] = useState<Entry | null>(null);
   useEffect(() => {
     fetchCms(`/entries/${id}`)
       .then(it => it.json())
-      .then(it => (setEntry(it)));
+      .then(it => (setEntry(it.let(it => ({ ...it, publishedAt: new Date(it.publishedAt) })))));
   }, [id]);
   return (
     <>
     <Header />
     <main>
+      <section>
+        <h1>{entry?.title ?? "loading..."}</h1>
+      </section>
+      {/* microCMSはリッチテキストをhtmlで返してくるので、refで埋め込む。
+          また、mvp.cssはimgをfigureで挟むことを想定しているので、いい感じに置き換えるようにしている。 */}
       <div ref={(ref) => (entry && ref && (ref.innerHTML = entry.body.replace(/<img(.+?)>/g, "<figure><img $1></figure>")))}>loading</div>
     </main>
     <footer>@kojiro.ueda</footer>
@@ -38,24 +47,28 @@ const Entry: FC<{ id: string }> = ({ id }) => {
 }
 
 const Entries: FC = () => {
-  const [entries, setEntries] = useState<Array<{
-    id: string;
-    title: string;
-    body: string;
-  }>>([]);
+  const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
     fetchCms("/entries")
       .then(it => it.json())
-      .then(it => setEntries(it.contents));
+      .then(({ contents }: { contents: Entry[] }) =>
+        setEntries(contents.map(it => ({ ...it, publishedAt: new Date(it.publishedAt) }))));
   }, []);
   return (
     <>
     <Header />
     <main>
-      <ul>
-        {entries.map(it => <li key={it.id}><Link href={`/entries/${it.id}`}>{it.title}</Link></li>)}
-      </ul>
+      <section>
+        {entries.map(it =>
+          <aside key={it.id}>
+            <h3>
+              <Link href={`/entries/${it.id}`}>{it.title}</Link>
+            </h3>
+            <p><small>{it.publishedAt.toDateString()}</small></p>
+          </aside>)}
+      </section>
     </main>
+    <footer>@kojiro.ueda</footer>
     </>
   );
 }
