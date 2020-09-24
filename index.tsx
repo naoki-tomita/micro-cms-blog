@@ -1,15 +1,22 @@
 import React, { FC, useEffect, useState } from "react";
 import { render } from "react-dom";
 import "object-extention";
-import logo from "url:./logo.png";
+import logo from "./logo.png";
 
 function fetchCms(path: string) {
-  return fetch(`https://blog123.microcms.io/api/v1${path}`, { headers: {"x-api-key": "28f43798-9e62-4696-8c22-f0a7890f8974"} })
+  return fetch(
+    `https://blog123.microcms.io/api/v1${path}`,
+    { headers: {"x-api-key": "28f43798-9e62-4696-8c22-f0a7890f8974"} }
+  );
 }
 
 const Header: FC = () => {
   return (
-    <header style={{ background: `url(${logo}) center no-repeat`, display: "block", height: 220, ...{"&:hover": { filter: "none" }} }}>
+    <header style={{
+      background: `url(${logo}) center no-repeat`,
+      display: "block",
+      height: 220
+    }}>
       <Link href="/entries" style={{ height: "100%", width: "100%" }} ></Link>
     </header>
   );
@@ -144,7 +151,6 @@ function useRouter(routes: Route[]): Router {
     setPath(location.hash.substring(1));
   }, []);
   useEffect(() => {location.hash = path}, [path]);
-
   return {
     href(path) {
       setPath(path);
