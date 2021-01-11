@@ -35,7 +35,7 @@ const Entry: FC<{ id: string }> = ({ id }) => {
   useEffect(() => {
     fetchCms(`/entries/${id}`)
       .then(it => it.json())
-      .then(it => (setEntry(it.let(it => ({ ...it, publishedAt: new Date(it.publishedAt) })))));
+      .then((it: Omit<Entry, "publishedAt"> & { publishedAt: string }) => (setEntry(it.let(it => ({ ...it, publishedAt: new Date(it.publishedAt) })))));
   }, [id]);
   return (
     <>
@@ -46,7 +46,9 @@ const Entry: FC<{ id: string }> = ({ id }) => {
       </section>
       {/* microCMSはリッチテキストをhtmlで返してくるので、refで埋め込む。
           また、mvp.cssはimgをfigureで挟むことを想定しているので、いい感じに置き換えるようにしている。 */}
-      <div ref={(ref) => (entry && ref && (ref.innerHTML = entry.body.replace(/<img(.+?)>/g, "<figure><img $1></figure>")))}>loading</div>
+      <section>
+        <div ref={(ref) => (entry && ref && (ref.innerHTML = entry.body.replace(/<img(.+?)>/g, "<figure><img $1></figure>")))}>loading</div>
+      </section>
     </main>
     <footer>@kojiro.ueda</footer>
     </>
@@ -59,7 +61,7 @@ const Entries: FC = () => {
     fetchCms("/entries")
       .then(it => it.json())
       .then(({ contents }: { contents: Entry[] }) =>
-        setEntries(contents.map(it => ({ ...it, publishedAt: new Date(it.publishedAt) }))));
+        setEntries(contents.map(it => ({ ...it, publishedAt: new Date(it.publishedAt as unknown as string) }))));
   }, []);
   return (
     <>
@@ -100,7 +102,7 @@ const App: FC = () => {
 
 interface Route {
   path: string;
-  Component: FC;
+  Component: FC<any>;
 }
 
 interface Router {
@@ -129,7 +131,7 @@ function matchPath(path: string, expectedPath: string): boolean {
 function getProps(path: string, expectedPath: string): any {
   const paths = path.split("/");
   const expectedPaths = expectedPath.split("/");
-  const result = {};
+  const result: {[key: string]: string} = {};
   for (const i in paths) {
     if (expectedPaths[i].startsWith(":")) {
       result[expectedPaths[i].substring(1)] = paths[i];
@@ -160,9 +162,12 @@ function useRouter(routes: Route[]): Router {
     },
     path,
     Router: (props) => {
+      const route = routes.find(it => matchPath(path, it.path))
       return (
         <div {...props} >
-          {routes.find(it => matchPath(path, it.path))?.let(({ Component, path: epath }) => <Component {...getProps(path, epath)} />) ?? "not found"}
+          {
+            route?.let(({ Component, path: epath }: Route) => <Component {...getProps(path, epath)} />)
+            ?? "not found"}
         </div>
       );
     },
